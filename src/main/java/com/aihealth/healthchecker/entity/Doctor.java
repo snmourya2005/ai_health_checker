@@ -8,7 +8,6 @@ import lombok.Setter;
 @Table(name="doctors")
 @Getter
 @Setter
-
 public class Doctor {
 
     @Id
@@ -27,5 +26,22 @@ public class Doctor {
     @Column(nullable = false)
     private String location;
 
-    public Doctor(){}
+    private String email;
+
+    public Doctor() {}
+
+    public Doctor(String name, String specialization, String hospital, String location) {
+        this.name = name;
+        this.specialization = specialization;
+        this.hospital = hospital;
+        this.location = location;
+    }
+
+    public Doctor(String name, String specialization, String hospital, String location, String email) {
+        this.name = name;
+        this.specialization = specialization;
+        this.hospital = hospital;
+        this.location = location;
+        this.email = email;
+    }
 }
