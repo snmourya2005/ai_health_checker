@@ -14,10 +14,22 @@ public class PaymentController {
     @Value("${stripe.secret.key}")
     private String stripeKey;
 
+    @Value("${FRONTEND_URL:https://ai-health-checker-frontend.vercel.app}")
+    private String defaultFrontendUrl;
+
     @PostMapping("/create-session")
-    public String createSession() throws Exception {
+    public String createSession(@RequestHeader(value = "Origin", required = false) String origin) throws Exception {
 
         Stripe.apiKey = stripeKey;
+
+        String baseUrl = (origin != null && !origin.trim().isEmpty() && !origin.equals("null"))
+                ? origin.trim()
+                : defaultFrontendUrl;
+
+        // Remove trailing slash if present
+        if (baseUrl.endsWith("/")) {
+            baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+        }
 
         SessionCreateParams.LineItem.PriceData.ProductData product =
                 SessionCreateParams.LineItem.PriceData.ProductData.builder()
@@ -40,8 +52,8 @@ public class PaymentController {
         SessionCreateParams params =
                 SessionCreateParams.builder()
                         .setMode(SessionCreateParams.Mode.PAYMENT)
-                        .setSuccessUrl("http://localhost:5173/payment-success")
-                        .setCancelUrl("http://localhost:5173/payment-cancel")
+                        .setSuccessUrl(baseUrl + "/payment-success")
+                        .setCancelUrl(baseUrl + "/payment-cancel")
                         .addLineItem(item)
                         .build();
 

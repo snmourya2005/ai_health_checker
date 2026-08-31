@@ -42,6 +42,11 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/",
+                                "/error",
+                                "/api/health/**",
+                                "/api/ping/**",
+                                "/api/payments/**",
                                 "/api/auth/**",
                                 "/api/users/**",
                                 "/api/doctors/**",
@@ -67,16 +72,15 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    // CORS CONFIGURATION (ADD THIS HERE)
+    // CORS CONFIGURATION
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("http://localhost:5173",
-                           "http://localhost:5174"
-         ));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedOriginPatterns(List.of("*"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Authorization", "Content-Disposition"));
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
